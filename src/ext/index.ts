@@ -1,3 +1,6 @@
 import type { Extension } from "../lib/define";
+import dev from "./dev";
 
-export default [] as Extension[];
+export default [
+	dev,
+] as Extension[];
