@@ -26,7 +26,8 @@ async function init() {
 		},
 	};
 
-	await import(`https://esm.sh/es-module-shims@${__ES_MODULE_SHIMS_VERSION}`);
+	// @include(es-module-shims)
+
 	for (const script of document.querySelectorAll<HTMLScriptElement>("script:not([type])")) {
 		const scriptShim = document.createElement("script");
 		scriptShim.textContent = script.textContent.replaceAll("import(", "importShim(");

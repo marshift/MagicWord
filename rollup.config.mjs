@@ -1,9 +1,11 @@
-import replace from "@rollup/plugin-replace";
 import typescript from "@rollup/plugin-typescript";
+import { nodeResolve } from "@rollup/plugin-node-resolve";
 import { defineConfig } from "rollup";
 import serve from "rollup-plugin-serve";
 import userscript from "rollup-plugin-userscript";
 import pkg from "./package.json" with { type: "json" };
+
+const includeRegex = /\/\/ @include\(([^ \)]+)\)/;
 
 export default defineConfig({
 	input: "./src/index.ts",
@@ -12,13 +14,32 @@ export default defineConfig({
 		file: `./dist/MagicWord.user.js`,
 	},
 	bundle: true,
-	external: "es-module-shims",
 	plugins: [
 		typescript(),
-		replace({
-			values: { "__ES_MODULE_SHIMS_VERSION": JSON.stringify(pkg.dependencies["es-module-shims"]) },
-			preventAssignment: true,
-		}),
+		nodeResolve(),
+		{
+			name: "include",
+			async transform(file) {
+				let modified = false;
+
+				while (true) {
+					const match = file.match(includeRegex);
+					if (match === null) break;
+					const [comment, id] = match;
+
+					const { code } = await this.resolve(id).then(this.load);
+					if (code === null) this.error({
+						code: comment,
+						message: `Failed to get code for import ${id}`
+					});
+
+					file = file.replace(comment, code);
+					modified = true;
+				}
+
+				if (modified) return file;
+			},
+		},
 		userscript((meta) =>
 			meta
 				.replace("__VERSION", pkg.version)
