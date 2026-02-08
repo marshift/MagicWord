@@ -1,7 +1,10 @@
 import "./meta.js?userscript-metadata";
+import { getApi } from "./lib/api";
+import { applyPatches } from "./lib/patcher";
 
 async function init() {
 	window.stop(); // stophack!
+	window.MagicWord = getApi();
 
 	const newDocument = await fetch(document.location.href.split("#")[0]).then((res) => res.text())
 		.then((t) => new DOMParser().parseFromString(t, "text/html"));
@@ -18,7 +21,7 @@ async function init() {
 		nativePassthrough: false,
 		source: async (url, fetchOpts, parent, defaultSourceHook) => {
 			const mod = await defaultSourceHook(url, fetchOpts, parent);
-			if (mod.type === "js" && typeof mod.source == "string") mod.source += `console.log("hi aze: ${url}")`;
+			if (mod.type === "js" && typeof mod.source === "string") mod.source = applyPatches(mod.source);
 			return mod;
 		},
 	};
