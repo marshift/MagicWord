@@ -8,7 +8,6 @@
 		"dev": "rolldown -wc"
 	},
 	"devDependencies": {
-		"@rollup/plugin-replace": "^6.0.3",
 		"@rollup/plugin-typescript": "^12.3.0",
 		"rolldown": "1.0.0-rc.3",
 		"rollup-plugin-serve": "^3.0.0",
@@ -17,6 +16,7 @@
 		"typescript": "^5.9.3"
 	},
 	"dependencies": {
+		"@rollup/plugin-node-resolve": "^16.0.3",
 		"es-module-shims": "^2.8.0"
 	}
 }

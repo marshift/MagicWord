@@ -1,5 +1,5 @@
-import replace from "@rollup/plugin-replace";
 import typescript from "@rollup/plugin-typescript";
+import nodeResolve from '@rollup/plugin-node-resolve';
 import { defineConfig } from "rolldown";
 import serve from "rollup-plugin-serve";
 import userscript from "rollup-plugin-userscript";
@@ -10,15 +10,11 @@ export default defineConfig({
 	output: {
 		format: "iife",
 		file: `./dist/MagicWord.user.js`,
+		codeSplitting: false,
 	},
-	bundle: true,
-	external: "es-module-shims",
 	plugins: [
 		typescript(),
-		replace({
-			values: { "__ES_MODULE_SHIMS_VERSION": JSON.stringify(pkg.dependencies["es-module-shims"]) },
-			preventAssignment: true,
-		}),
+		nodeResolve(),
 		userscript((meta) =>
 			meta
 				.replace("__VERSION", pkg.version)
