@@ -1,4 +1,3 @@
-import "./meta.js?userscript-metadata";
 import { getApi } from "./lib/api";
 import { applyPatches } from "./lib/patcher";
 
@@ -26,6 +25,7 @@ async function init() {
 		},
 	};
 
+	// @ts-expect-error es-module-shims is technically not a module
 	await import("es-module-shims");
 	for (const script of document.querySelectorAll<HTMLScriptElement>("script:not([type])")) {
 		const scriptShim = document.createElement("script");

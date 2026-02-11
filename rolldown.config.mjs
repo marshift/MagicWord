@@ -1,9 +1,19 @@
-import typescript from "@rollup/plugin-typescript";
-import nodeResolve from '@rollup/plugin-node-resolve';
 import { defineConfig } from "rolldown";
 import serve from "rollup-plugin-serve";
-import userscript from "rollup-plugin-userscript";
 import pkg from "./package.json" with { type: "json" };
+
+const USERSCRIPT_BANNER = `
+// ==UserScript==
+// @name        Magic Word
+// @match       https://helldiverscompanion.com/*
+// @version     ${pkg.version}
+// @author      ${pkg.author}
+// @license     ${pkg.license}
+// @grant       none
+// @inject-into page
+// @run-at      document-start
+// ==/UserScript==
+`.trim();
 
 export default defineConfig({
 	input: "./src/index.ts",
@@ -11,16 +21,9 @@ export default defineConfig({
 		format: "iife",
 		file: `./dist/MagicWord.user.js`,
 		codeSplitting: false,
+		postBanner: USERSCRIPT_BANNER,
 	},
 	plugins: [
-		typescript(),
-		nodeResolve(),
-		userscript((meta) =>
-			meta
-				.replace("__VERSION", pkg.version)
-				.replace("__AUTHOR", pkg.author)
-				.replace("__LICENSE", pkg.license)
-		),
 		serve("./dist/"),
 	],
 });
