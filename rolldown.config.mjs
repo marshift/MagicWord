@@ -1,6 +1,6 @@
 import replace from "@rollup/plugin-replace";
 import typescript from "@rollup/plugin-typescript";
-import { defineConfig } from "rollup";
+import { defineConfig } from "rolldown";
 import serve from "rollup-plugin-serve";
 import userscript from "rollup-plugin-userscript";
 import pkg from "./package.json" with { type: "json" };
