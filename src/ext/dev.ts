@@ -139,6 +139,11 @@ export default defineExtension({
 			find: /const (.{1,2})=(.{1,2})=>.{1,2}\?\?-1/g,
 			replace: "const $1=$2=>$2<0?1:$2",
 		},
+		// show forcibly disabled planet tags
+		{
+			find: /(.{1,2})\.tagType=(.{1,2})\.Hidden/g,
+			replace: (_, tag, tagTypes) => `${tag}.tagType=${tagTypes}.OpParameter`,
+		},
 	],
 	manifest: {
 		name: "dev",
