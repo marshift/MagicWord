@@ -1,0 +1,22 @@
+diff --git a/dist/es-module-shims.js b/dist/es-module-shims.js
+index 8e5261d5da51b02e856fb767ded4c8dd0f68fadb..58337e1a25dc6eb079d9674219b87675850b542d 100644
+--- a/dist/es-module-shims.js
++++ b/dist/es-module-shims.js
+@@ -1071,6 +1071,17 @@
+ 
+     pushStringTo(load, source.length, dynamicImportEndStack);
+ 
++    // Very hacky!
++    resolvedSource += `window.MagicWord.exportCache['${load.u}'] = { ${load.a[1]
++        .filter(e => !(e.n === 'default' && e.ln === undefined))
++        // NOTE: THIS WILL NOT SUPPORT EVERYTHING. `export default` DOES NOT WORK
++        .map(e =>
++            e.n !== undefined
++                ? `${e.n}: ${e.ln}`
++                : e.n
++        ).join(', ')
++    } };`;
++
+     if (sourceURLCommentStart === -1) resolvedSource += sourceURLCommentPrefix + load.r;
+ 
+     load.b = createBlob(resolvedSource);
