@@ -1,5 +1,5 @@
 import { getApi } from "./lib/api";
-import { applyPatches } from "./lib/patcher";
+import { applyPatches, runPostHooks } from "./lib/patcher";
 
 async function init() {
 	window.stop(); // stophack!
@@ -34,6 +34,8 @@ async function init() {
 		for (const attr of script.attributes) scriptShim.setAttribute(attr.name, attr.value);
 		script.replaceWith(scriptShim);
 	}
+
+	runPostHooks();
 }
 
 // Wait for one single "event cycle" so that `window.stop()` does not break Chromium. What the fuck.

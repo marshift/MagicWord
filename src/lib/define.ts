@@ -7,6 +7,7 @@ export interface Patch {
 
 export interface Extension {
 	patches?: Patch[];
+	post?: () => void;
 	manifest: {
 		name: string;
 		description: string;

@@ -22,3 +22,10 @@ export function applyPatches(script: string) {
 
 	return script;
 }
+
+export function runPostHooks() {
+	for (let ext of extensions) {
+		if (!ext.post) continue;
+		ext.post();
+	}
+}
