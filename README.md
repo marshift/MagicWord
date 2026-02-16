@@ -1,5 +1,4 @@
-# Magic Word
-hi aze
+![Magic Word](/logo.svg)
 
 ## prerequisites
 * Violentmonkey
