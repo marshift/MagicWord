@@ -1,10 +1,8 @@
-export async function waitForExport(exportt: string) {
-	let thing: any = null;
-
-	while (!thing) {
-		thing = MagicWord.common[exportt];
+export async function waitForExport(key: string) {
+	while (true) {
+		if (key in MagicWord.common) {
+			return MagicWord.common[key];
+		}
 		await new Promise(res => requestAnimationFrame(res));
 	}
-
-	return thing;
 }
