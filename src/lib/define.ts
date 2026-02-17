@@ -5,8 +5,14 @@ export interface Patch {
 	replace: Replacer;
 }
 
+export interface Export {
+	name: string;
+	find: RegExp;
+}
+
 export interface Extension {
 	patches?: Patch[];
+	exports?: Export[];
 	post?: () => void;
 	manifest: {
 		name: string;
@@ -16,4 +22,16 @@ export interface Extension {
 	core?: boolean;
 }
 
-export const defineExtension = <T extends Extension>(ext: T) => ext;
+export const defineExtension = <T extends Extension>(ext: T) => {
+	if (ext.exports) {
+		for (const exxport of ext.exports) {
+			if (!ext.patches) ext.patches = [];
+			ext.patches.unshift({
+				find: exxport.find,
+				replace: (_, orig) => `const ${orig}=MagicWord.common['${exxport.name}']=`,
+			});
+		}
+	}
+
+	return ext;
+};
