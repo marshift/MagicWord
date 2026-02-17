@@ -20,7 +20,13 @@ async function init() {
 		nativePassthrough: false,
 		source: async (url, fetchOpts, parent, defaultSourceHook) => {
 			const mod = await defaultSourceHook(url, fetchOpts, parent);
-			if (mod.type === "js" && typeof mod.source === "string") mod.source = applyPatches(mod.source);
+			if (mod.type === "js" && typeof mod.source === "string") {
+				mod.source = applyPatches(mod.source);
+				mod.source = (mod.source as string).replace(/export\{([^}]+)\};/g, (match, inner) => {
+					const names = inner.split(",").map((part: string) => part.split(/\s+as\s+/)[0].trim());
+					return match + `\nMagicWord.exportCache["${url}"] = { ${names.join(", ")} }`;
+				});
+			}
 			return mod;
 		},
 	};

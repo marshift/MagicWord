@@ -4,18 +4,13 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-patchedDependencies:
-  es-module-shims:
-    hash: 8d5562c54e9fad78ed1c7431470ae55bfe7fec6edf1582951a1b8a1afb5269df
-    path: patches/es-module-shims.patch
-
 importers:
 
   .:
     dependencies:
       es-module-shims:
         specifier: ^2.8.0
-        version: 2.8.0(patch_hash=8d5562c54e9fad78ed1c7431470ae55bfe7fec6edf1582951a1b8a1afb5269df)
+        version: 2.8.0
     devDependencies:
       rolldown:
         specifier: 1.0.0-rc.4
@@ -230,7 +225,7 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
-  es-module-shims@2.8.0(patch_hash=8d5562c54e9fad78ed1c7431470ae55bfe7fec6edf1582951a1b8a1afb5269df): {}
+  es-module-shims@2.8.0: {}
 
   mime@4.1.0: {}
 
