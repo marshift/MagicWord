@@ -1,5 +1,17 @@
+interface ConditionContext {
+	planet: Planet;
+}
+
 interface Planet {
 	is(id: number): boolean;
+	hasEffectID(id: number): boolean;
+	get isDefensive(): boolean;
+	get isOurs(): boolean;
+}
+
+export interface TagState {
+	condition: (ctx: ConditionContext) => boolean;
+	override: () => Partial<Tag>;
 }
 
 export interface Tag {
@@ -9,12 +21,13 @@ export interface Tag {
 	title?: string;
 	textTag?: string;
 	icBuild?: string;
-	theme?: any; /* TODO: TYPE! */
+	theme?: any /* TODO: TYPE! */;
 	modes?: string[];
 	weight?: number;
 	priority?: number;
 	timestamp?: [number, number, number][];
-	assignCondition?: ({ planet }: { planet: Planet }) => boolean;
+	assignCondition?: (ctx: ConditionContext) => boolean;
+	states?: TagState[];
 }
 
 export enum TagType {
