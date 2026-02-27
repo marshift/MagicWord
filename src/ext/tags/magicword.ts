@@ -68,6 +68,8 @@ export default function (tagThemes: any): Tag[] {
 					condition: ({ planet }) => !planet.isOurs,
 					override: () => ({
 						theme: tagThemes.poi_ghost,
+						niche: "NAVIGATOR REMAINS",
+						modes: ["neutralized"],
 						textTag:
 							"Here lies what remains of a slurping Navigator, who once greedily consumed thousands of litres of E-711.",
 					}),
