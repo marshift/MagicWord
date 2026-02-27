@@ -144,6 +144,16 @@ export default defineExtension({
 			find: /(.{1,2})\.tagType=(.{1,2})\.Hidden/g,
 			replace: (_, tag, tagTypes) => `${tag}.tagType=${tagTypes}.OpParameter`,
 		},
+
+		// Optionally disable the (potentially) slow FTL map layer
+		...(localStorage.getItem("DISABLE_FTL_LAYER") === "true"
+			? [
+					{
+						find: /\(.{1,2}=.{1,2}\.getSource\("ftls"\)\)==null\|\|.{1,2}\.setData\(.{1,2}\)/g,
+						replace: "(void 0)",
+					},
+				]
+			: []),
 	],
 	manifest: {
 		name: "dev",
