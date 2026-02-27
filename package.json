@@ -13,6 +13,7 @@
 		"typescript": "^5.9.3"
 	},
 	"dependencies": {
+		"@marshift/strawberry": "^1.7.3",
 		"es-module-shims": "^2.8.0"
 	}
 }

@@ -33,6 +33,7 @@ async function init() {
 
 	// @ts-expect-error es-module-shims is technically not a module
 	await import("es-module-shims");
+	await import("./lib/fetch");
 	for (const script of document.querySelectorAll<HTMLScriptElement>("script:not([type])")) {
 		const scriptShim = document.createElement("script");
 		scriptShim.textContent = script.textContent.replaceAll("import(", "importShim(");
