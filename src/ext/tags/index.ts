@@ -6,15 +6,17 @@ import magicword from "./magicword";
 
 export default defineExtension({
 	patches: [
+		// exports
+		{
+			find: /const (.{1,3})=(?=.{1,3}\({style_undefined:)/,
+			replace: (_, orig) => `const ${orig}=MagicWord.common['tagThemes']=`,
+		},
+
 		{
 			find: /(return\[)(?=\.\.\..{1,3}\(\),)/g,
 			replace: (_, orig) => `${orig}...$self.tags,`,
 		},
 	],
-	exports: [{
-		name: "tagThemes",
-		find: /const (.{1,3})=(?=.{1,3}\({style_undefined:)/,
-	}],
 
 	tags: [] as Tag[],
 	async post() {
