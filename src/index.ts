@@ -22,9 +22,9 @@ async function init() {
 			const mod = await defaultSourceHook(url, fetchOpts, parent);
 			if (mod.type === "js" && typeof mod.source === "string") {
 				mod.source = applyPatches(mod.source);
-				mod.source = (mod.source as string).replace(/export\{([^}]+)\};/g, (match, inner) => {
-					const names = inner.split(",").map((part: string) => part.split(/\s+as\s+/)[0].trim());
-					return match + `\nMagicWord.exportCache["${url}"] = { ${names.join(", ")} }`;
+				mod.source = (mod.source as string).replace(/export\{([^}]+)\}/g, (match, inner: string) => {
+					const names = inner.split(",").map((part: string) => part.split(/\s+as\s+/));
+					return match + `\nMagicWord.exportCache["${url}"] = { ${names.map(v => `${v[1]}: ${v[0]}`).join(',')} }`;
 				});
 			}
 			return mod;
