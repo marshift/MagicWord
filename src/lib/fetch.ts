@@ -59,7 +59,7 @@ strawberry.instead(window, 'fetch', async ([resource, options], orig) => {
 
 	for (const rewrite of rewrites) {
 		if (rewrite.instead) {
-			return rewrite.instead(request);
+			return rewrite.instead(request, orig);
 		}
 	}
 

@@ -10,11 +10,11 @@ export interface Patch {
 export interface Rewrite {
 	match: RegExp | string;
 	/**
-	 * Return a response, sidestepping the `fetch` call entirely.
+	 * Return a response, sidestepping the `fetch` call entirely. The original, unmodified `fetch` function is also provided.
 	 *
 	 * Runs before `before` and `after` (which don't get to run if an `instead` is executed). The first `instead` that matches will trigger, and the rest will be silently ignored.
 	 */
-	instead?: (req: Request) => Response;
+	instead?: (req: Request, fetch: Window['fetch']) => Response;
 	/**
 	 * Modify the request before it gets processed by `fetch`.
 	 *
