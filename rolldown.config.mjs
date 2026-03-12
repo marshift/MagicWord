@@ -6,6 +6,7 @@ const USERSCRIPT_BANNER = `
 // ==UserScript==
 // @name        Magic Word
 // @match       https://helldiverscompanion.com/*
+// @match       https://stage.helldivers2-companion-org-app.pages.dev/*
 // @version     ${pkg.version}
 // @author      ${pkg.author}
 // @license     ${pkg.license}

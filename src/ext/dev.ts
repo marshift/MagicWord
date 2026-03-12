@@ -1,3 +1,4 @@
+import { IS_STAGING } from "../constants";
 import { defineExtension } from "../lib/define";
 
 export default defineExtension({
@@ -6,9 +7,27 @@ export default defineExtension({
 		// Allows writing to the debug fields.
 		// Mainly to fix page TestWIP page switching as it needs a writable field.
 		{
-			find: /(.)\.lockedField/gi,
+			find: IS_STAGING ? /(.)\.lockedFieldDEV/gi : /(.)\.lockedField/gi,
 			replace: "$1.newField",
 		},
+
+		...(IS_STAGING ? [
+			{
+				find: /(.)\.lockedFieldV3/gi,
+				replace: "$1.newField"
+			},
+			...(window.localStorage.getItem("ENABLE_V3") === "true" ? [
+				{
+					find: /"_fl",!1/i,
+					replace: "\"_fl\",!0"
+				},
+				{
+					find: /function h\((.{1,2},.{1,2})\){return .{1,2}\[\d+\]\?0:1}/gi,
+					replace: "function h($1){return 1}"
+				}
+			] : [])
+		] : []),
+
 
 		// Debug Key
 		{
