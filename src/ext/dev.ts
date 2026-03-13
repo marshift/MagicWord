@@ -7,27 +7,25 @@ export default defineExtension({
 		// Allows writing to the debug fields.
 		// Mainly to fix page TestWIP page switching as it needs a writable field.
 		{
-			find: IS_STAGING ? /(.)\.lockedFieldDEV/gi : /(.)\.lockedField/gi,
+			find: /(.)\.lockedFieldDEV/gi,
 			replace: "$1.newField",
 		},
+		{
+			find: /(.)\.lockedFieldV3/gi,
+			replace: "$1.newField"
+		},
 
-		...(IS_STAGING ? [
+		// NOTE: Currently broken
+		...(window.localStorage.getItem("ENABLE_V3") === "true" ? [
 			{
-				find: /(.)\.lockedFieldV3/gi,
-				replace: "$1.newField"
+				find: /"_fl",!1/i,
+				replace: "\"_fl\",!0"
 			},
-			...(window.localStorage.getItem("ENABLE_V3") === "true" ? [
-				{
-					find: /"_fl",!1/i,
-					replace: "\"_fl\",!0"
-				},
-				{
-					find: /function h\((.{1,2},.{1,2})\){return .{1,2}\[\d+\]\?0:1}/gi,
-					replace: "function h($1){return 1}"
-				}
-			] : [])
+			{
+				find: /function h\((.{1,2},.{1,2})\){return .{1,2}\[\d+\]\?0:1}/gi,
+				replace: "function h($1){return 1}"
+			}
 		] : []),
-
 
 		// Debug Key
 		{
