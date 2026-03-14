@@ -1,31 +1,31 @@
 import type { Tag } from "../../lib/companion";
 import { defineExtension } from "../../lib/define";
-import { waitForExport } from "../../lib/util";
 import companion from "./companion";
 import magicword from "./magicword";
 
 export default defineExtension({
+	tags: [] as Tag[],
+
 	patches: [
 		// exports
 		{
 			find: /const (.{1,3})=(?=.{1,3}\({style_undefined:)/,
 			replace: (_, orig) => `const ${orig}=MagicWord.common['tagThemes']=`,
 		},
+		{
+			find: /function (.{1,5})\(.{1,2},.{1,2}\)(?={return .{1,2}?.{1,2}\.filter\(.{1,2}=>.{1,2}\.text\.length)/,
+			replace: (_, name) => `MagicWord.common['genUpdateText'] = ${name}; ${_}`,
+		},
 
+		// Add to the tag registry
 		{
 			find: /(return\[)(?=\.\.\..{1,3}\(\),)/g,
 			replace: (_, orig) => `${orig}...$self.tags,`,
 		},
 	],
 
-	tags: [] as Tag[],
 	async post() {
-		const tagThemes = await waitForExport("tagThemes");
-
-		this.tags.push(
-			...companion(tagThemes),
-			...magicword(tagThemes),
-		);
+		this.tags.push(...(await companion()), ...(await magicword()));
 	},
 
 	manifest: {

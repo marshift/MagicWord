@@ -1,6 +1,8 @@
 import { type Tag, TagType } from "../../lib/companion";
+import { waitForExport } from "../../lib/util";
 
-export default function(tagThemes: any): Tag[] {
+export default async function(): Promise<Tag[]> {
+	const tagThemes = await waitForExport("tagThemes");
 	const Colours = MagicWord.findByObjectKeys("diver_yellow")[0];
 
 	return [
