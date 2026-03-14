@@ -1,4 +1,3 @@
-import { IS_STAGING } from "../constants";
 import { defineExtension } from "../lib/define";
 
 export default defineExtension({
@@ -160,6 +159,16 @@ export default defineExtension({
 		{
 			find: /(.{1,2})\.tagType=(.{1,2})\.Hidden/g,
 			replace: (_, tag, tagTypes) => `${tag}.tagType=${tagTypes}.OpParameter`,
+		},
+
+		// TODO: Move, along with braille, to a separate extension for common exports
+		{
+			find: /const (.{1,3})=(?=class .{1,3}{static now)/,
+			replace: (_, name) => `const ${name}=MagicWord.common['utils']=`
+		},
+		{
+			find: /const (.{1,3})=(?=class .{1,3}{static enableSound)/,
+			replace: (_, name) => `const ${name}=MagicWord.common['sound']=`
 		},
 
 		// Optionally disable the (potentially) slow FTL map layer
