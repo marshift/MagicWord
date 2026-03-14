@@ -141,8 +141,8 @@ export default defineExtension({
 
 		// smugcat on #testwip is layout 1, needs to use layout 0
 		{
-			find: /function s\((.{1,2},.{1,2})\){return 1}/gi,
-			replace: "function s($1){return 0}",
+			find: /function o\((.{1,2},.{1,2})\){return 1}/i,
+			replace: "function o($1){return 0}"
 		},
 
 		// re-enable console logs
