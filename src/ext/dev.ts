@@ -6,12 +6,14 @@ export default defineExtension({
 		// Allows writing to the debug fields.
 		// Mainly to fix page TestWIP page switching as it needs a writable field.
 		{
-			find: /(.)\.lockedFieldDEV/gi,
-			replace: "$1.newField",
+			// previously lockedFieldDEV
+			find: /(.)\.lfD/gi,
+			replace: "$1.nF"
 		},
 		{
-			find: /(.)\.lockedFieldV3/gi,
-			replace: "$1.newField"
+			// previously lockedFieldV3
+			find: /(.)\.lfV3/gi,
+			replace: "$1.nF"
 		},
 
 		// NOTE: Currently broken
