@@ -142,8 +142,8 @@ export default defineExtension({
 
 		// smugcat on #testwip is layout 1, needs to use layout 0
 		{
-			find: /function o\((.{1,2},.{1,2})\){return 1}/i,
-			replace: "function o($1){return 0}"
+			find: /function l\((.{1,2},.{1,2})\){return 1}/i,
+			replace: "function l($1){return 0}"
 		},
 
 		// re-enable console logs
@@ -163,7 +163,7 @@ export default defineExtension({
 			replace: (_, tag, tagTypes) => `${tag}.tagType=${tagTypes}.OpParameter`,
 		},
 
-		// TODO: Move, along with braille, to a separate extension for common exports
+		// TODO: Move to a separate extension for common exports
 		{
 			find: /const (.{1,3})=(?=class .{1,3}{static now)/,
 			replace: (_, name) => `const ${name}=MagicWord.common['utils']=`
