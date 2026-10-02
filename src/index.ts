@@ -47,9 +47,17 @@ async function init() {
 	await import("./lib/fetch");
 	for (const script of document.querySelectorAll<HTMLScriptElement>("script:not([type])")) {
 		const scriptShim = document.createElement("script");
-		scriptShim.textContent = script.textContent.replaceAll("import(", "importShim(");
 
+		scriptShim.textContent = script.textContent.replaceAll("import(", "importShim(");
 		for (const attr of script.attributes) scriptShim.setAttribute(attr.name, attr.value);
+
+		// Patch non-ESM scripts that have a src attribute
+		if (scriptShim.hasAttribute('src')) {
+			const text = await fetch(scriptShim.src).then(res => res.text());
+			scriptShim.textContent = applyPatches(text);
+			scriptShim.removeAttribute('src');
+		}
+
 		script.replaceWith(scriptShim);
 	}
 
