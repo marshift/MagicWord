@@ -2,7 +2,18 @@ import { getApi } from "./lib/api";
 import { applyPatches, runPostHooks } from "./lib/patcher";
 
 async function init() {
-	window.stop(); // stophack!
+	// stophack alternative that doesn't break Chromium
+	const observer = new MutationObserver((mutations) => {
+		for (const mut of mutations) {
+			for (const node of mut.addedNodes) {
+				mut.target.removeChild(node);
+			}
+		}
+	});
+	observer.observe(document, { childList: true, subtree: true });
+	await new Promise((resolve) => window.addEventListener('load', resolve));
+	observer.disconnect();
+
 	window.MagicWord = getApi();
 
 	const newDocument = await fetch(document.location.href.split("#")[0]).then((res) => res.text())
@@ -45,5 +56,4 @@ async function init() {
 	runPostHooks();
 }
 
-// Wait for one single "event cycle" so that `window.stop()` does not break Chromium. What the fuck.
-setTimeout(init);
+init();
