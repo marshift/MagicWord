@@ -14,6 +14,6 @@
 	},
 	"dependencies": {
 		"@marshift/strawberry": "^1.7.3",
-		"es-module-shims": "^2.8.0"
+		"es-module-shims": "^2.8.4"
 	}
 }

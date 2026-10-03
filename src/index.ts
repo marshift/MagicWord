@@ -2,30 +2,25 @@ import { getApi } from "./lib/api";
 import { applyPatches, runPostHooks } from "./lib/patcher";
 
 async function init() {
-	// stophack alternative that doesn't break Chromium
+	// Remove the <body> and <head> elements before elements like <script>s get a chance to be evaluated
+	const insertedNodes: Set<Node> = new Set();
 	const observer = new MutationObserver((mutations) => {
 		for (const mut of mutations) {
 			for (const node of mut.addedNodes) {
+				// Certain extensions, like Stylus, repeatedly re-add their own elements when they're removed, so this skips deleting things if they've already been deleted
+				if (insertedNodes.has(node)) continue;
+
+				insertedNodes.add(node);
 				mut.target.removeChild(node);
 			}
 		}
 	});
-	observer.observe(document, { childList: true, subtree: true });
+	observer.observe(document.documentElement, { childList: true });
+	// Once the load event fires, we know no other elements from the initial page load are going to be added
 	await new Promise((resolve) => window.addEventListener('load', resolve));
 	observer.disconnect();
 
 	window.MagicWord = getApi();
-
-	const newDocument = await fetch(document.location.href.split("#")[0]).then((res) => res.text())
-		.then((t) => new DOMParser().parseFromString(t, "text/html"));
-
-	const oldRoot = document.documentElement;
-	const newRoot = newDocument.documentElement;
-
-	for (const attr of oldRoot.attributes) oldRoot.removeAttributeNode(attr);
-	for (const attr of newRoot.attributes) oldRoot.setAttributeNode(attr.cloneNode() as Attr);
-	oldRoot.replaceChildren(...newRoot.children);
-
 	window.esmsInitOptions = {
 		shimMode: true,
 		nativePassthrough: false,
@@ -42,24 +37,43 @@ async function init() {
 		},
 	};
 
+	// Patch scripts unhandled by es-module-shims
+	for (const script of insertedNodes.values()
+		.filter(e => e instanceof Element)
+		.flatMap(e => e.querySelectorAll<HTMLScriptElement>("script:not([type])"))
+	) {
+		if (script.hasAttribute('src')) {
+			try {
+				// Replacing `src` with an object URL seems to cause issues, so we inline the script instead
+				const text = await fetch(script.src).then(res => res.text());
+				script.textContent = applyPatches(text);
+				script.removeAttribute('src');
+			} catch (e) {
+				console.error(e);
+			}
+		}
+
+		script.textContent = script.textContent.replaceAll("import(", "importShim(");
+	}
+
+	// es-module-shims expects document.head to be defined, so we temporarily add it but with its items removed
+	const head = insertedNodes.values().find(e => e instanceof HTMLHeadElement);
+	let headChildren: ChildNode[] | undefined = undefined;
+	if (head) {
+		headChildren = Array.from(head.childNodes);
+		head.replaceChildren();
+		document.documentElement.prepend(head);
+	}
+
 	// @ts-expect-error es-module-shims is technically not a module
 	await import("es-module-shims");
 	await import("./lib/fetch");
-	for (const script of document.querySelectorAll<HTMLScriptElement>("script:not([type])")) {
-		const scriptShim = document.createElement("script");
 
-		scriptShim.textContent = script.textContent.replaceAll("import(", "importShim(");
-		for (const attr of script.attributes) scriptShim.setAttribute(attr.name, attr.value);
-
-		// Patch non-ESM scripts that have a src attribute
-		if (scriptShim.hasAttribute('src')) {
-			const text = await fetch(scriptShim.src).then(res => res.text());
-			scriptShim.textContent = applyPatches(text);
-			scriptShim.removeAttribute('src');
-		}
-
-		script.replaceWith(scriptShim);
+	if (head) {
+		head.remove();
+		head.replaceChildren(...headChildren!);
 	}
+	document.documentElement.replaceChildren(...Array.from(insertedNodes));
 
 	runPostHooks();
 }

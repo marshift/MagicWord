@@ -2,7 +2,7 @@
 
 ## prerequisites
 * Violentmonkey
-	- if using chromium, enable "Synchronous page mode" in Violentmonkey's settings
+	- if using chromium, enable "Alternative page mode" in Violentmonkey's settings
 
 ## usage
 * `pnpm build` to build and serve the script, or `pnpm dev` for the same in watch mode
