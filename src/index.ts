@@ -1,7 +1,10 @@
+import extensions from "./ext";
 import { getApi } from "./lib/api";
 import { applyPatches, runPostHooks } from "./lib/patcher";
 
 async function init() {
+	if (extensions.length === 0) return;
+
 	// Remove the <body> and <head> elements before elements like <script>s get a chance to be evaluated
 	const insertedNodes: Set<Node> = new Set();
 	const observer = new MutationObserver((mutations) => {

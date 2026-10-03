@@ -13,5 +13,6 @@ export default defineExtension({
 		description: "exports aze's braille strings to the common registry",
 		authors: ["Alyxia"],
 	},
+	domains: ['helldiverscompanion.com', 'stage.helldivers2-companion-org-app.pages.dev'],
 	core: true,
 });

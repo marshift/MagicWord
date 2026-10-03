@@ -33,5 +33,6 @@ export default defineExtension({
 		authors: ["Alyxia"],
 		description: "Adds to the list of planet tags",
 	},
+	domains: ['helldiverscompanion.com', 'stage.helldivers2-companion-org-app.pages.dev'],
 	core: true,
 });

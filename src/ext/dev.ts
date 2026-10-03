@@ -188,4 +188,5 @@ export default defineExtension({
 		description: "hi aze",
 		authors: ["Alyxia", "marshift"],
 	},
+	domains: ['helldiverscompanion.com', 'stage.helldivers2-companion-org-app.pages.dev']
 });

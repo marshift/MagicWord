@@ -38,6 +38,11 @@ export interface Extension {
 		description: string;
 		authors: string[];
 	};
+	/**
+	 * A list of strictly-matching domains (`example.com` won't match `other.example.com` and vice versa)
+	 * where the extension should execute.
+	 */
+	domains: string[];
 	core?: boolean;
 }
 
