@@ -41,22 +41,41 @@ async function init() {
 	};
 
 	// Patch scripts unhandled by es-module-shims
+	let lastDeferred: HTMLScriptElement | undefined = undefined;
 	for (const script of insertedNodes.values()
 		.filter(e => e instanceof Element)
 		.flatMap(e => e.querySelectorAll<HTMLScriptElement>("script:not([type])"))
 	) {
 		if (script.hasAttribute('src')) {
 			try {
-				// Replacing `src` with an object URL seems to cause issues, so we inline the script instead
-				const text = await fetch(script.src).then(res => res.text());
-				script.textContent = applyPatches(text);
-				script.removeAttribute('src');
+				let text = await fetch(script.src).then(res => res.text());
+				text = applyPatches(text)
+					.replaceAll("import(", "importShim(");
+
+				const blob = new Blob([text], { type: 'text/javascript' });
+				const src = URL.createObjectURL(blob);
+
+				// https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/script#defer
+				// "Scripts with the defer attribute will execute in the order in which they appear in the document."
+				// Since we load our scripts after the initial page has already been processed, we have to emulate the behavior of the `defer` tag
+				if (script.hasAttribute('defer')) {
+					if (lastDeferred) {
+						lastDeferred.addEventListener('load', () => {
+							script.setAttribute('src', src);
+						});
+						script.removeAttribute('src');
+					}
+					lastDeferred = script;
+				} else {
+					script.setAttribute('src', src);
+				}
 			} catch (e) {
 				console.error(e);
 			}
+		} else {
+			script.textContent = applyPatches(script.textContent)
+				.replaceAll("import(", "importShim(");
 		}
-
-		script.textContent = script.textContent.replaceAll("import(", "importShim(");
 	}
 
 	// es-module-shims expects document.head to be defined, so we temporarily add it but with its items removed
